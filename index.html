@@ -19,6 +19,7 @@
       justify-content: center;
       overflow: hidden;
       cursor: none;
+      font-family: Inter, Arial, Helvetica, sans-serif;
     }
 
     canvas {
@@ -51,6 +52,7 @@
       transform: translate(-50%, -50%);
       border: 1px solid rgba(255, 215, 106, 0.35);
       box-shadow: 0 0 10px rgba(255, 215, 106, 0.18);
+      transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
     }
 
     .trail {
@@ -75,10 +77,23 @@
       }
     }
 
+    .logo-area {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      transition: transform 0.8s cubic-bezier(.2, .9, .2, 1), opacity 0.5s ease;
+    }
+
+    body.panel-open .logo-area {
+      transform: translateX(13vw) scale(0.94);
+    }
+
     .logo-container {
       position: relative;
       display: inline-block;
-      z-index: 2;
       animation: float 6s ease-in-out infinite;
       line-height: 0;
     }
@@ -92,6 +107,7 @@
         drop-shadow(0 0 5px rgba(255, 215, 106, 0.35))
         drop-shadow(0 0 12px rgba(255, 190, 55, 0.22));
       transition: transform 0.35s ease, filter 0.35s ease;
+      user-select: none;
     }
 
     .logo-container:hover .logo {
@@ -102,6 +118,134 @@
         drop-shadow(0 0 18px rgba(255, 190, 55, 0.32));
     }
 
+    .click-hint {
+      color: rgba(255, 255, 255, 0.28);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+      animation: breathe 2.7s ease-in-out infinite;
+      user-select: none;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        opacity: 0.22;
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        opacity: 0.58;
+        transform: translateY(2px) scale(1.035);
+      }
+    }
+
+    .info-panel {
+      position: fixed;
+      left: 42px;
+      top: 50%;
+      width: min(420px, calc(100vw - 84px));
+      max-height: calc(100vh - 84px);
+      padding: 34px 32px;
+      z-index: 4;
+      color: rgba(245, 245, 245, 0.86);
+      background:
+        linear-gradient(145deg, rgba(30, 30, 30, 0.84), rgba(22, 22, 22, 0.72)),
+        radial-gradient(circle at 20% 0%, rgba(255, 215, 106, 0.08), transparent 42%);
+      border: 1px solid rgba(255, 215, 106, 0.16);
+      border-radius: 22px;
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 0 42px rgba(255, 205, 86, 0.045);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      transform: translate(-120%, -50%) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.8s cubic-bezier(.2, .9, .2, 1),
+        opacity 0.55s ease;
+      overflow: hidden;
+    }
+
+    .info-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(120deg, transparent 0%, rgba(255, 215, 106, 0.09) 45%, transparent 70%);
+      transform: translateX(-120%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    body.panel-open .info-panel {
+      transform: translate(0, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.panel-open .info-panel::before {
+      animation: panelShine 1.35s ease 0.22s forwards;
+    }
+
+    @keyframes panelShine {
+      0% {
+        transform: translateX(-120%);
+        opacity: 0;
+      }
+
+      25% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+    }
+
+    .panel-text {
+      position: relative;
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.78;
+      letter-spacing: 0.01em;
+      text-align: justify;
+      text-justify: inter-word;
+      font-weight: 400;
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    body.panel-open .panel-text {
+      animation: textReveal 0.85s ease 0.34s forwards, textActive 4.8s ease-in-out 1.2s infinite;
+    }
+
+    .panel-text strong {
+      color: rgba(255, 235, 165, 0.95);
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(255, 215, 106, 0.16);
+    }
+
+    @keyframes textReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes textActive {
+      0%, 100% {
+        text-shadow: 0 0 0 rgba(255, 215, 106, 0);
+      }
+
+      50% {
+        text-shadow: 0 0 16px rgba(255, 215, 106, 0.055);
+      }
+    }
+
     @keyframes float {
       0%, 100% {
         transform: translateY(0);
@@ -109,6 +253,55 @@
 
       50% {
         transform: translateY(-10px);
+      }
+    }
+
+    @media (max-width: 860px) {
+      body.panel-open .logo-area {
+        transform: translateY(-22vh) scale(0.72);
+      }
+
+      .info-panel {
+        left: 50%;
+        top: auto;
+        bottom: 24px;
+        width: min(86vw, 430px);
+        max-height: 44vh;
+        padding: 24px 22px;
+        border-radius: 18px;
+        transform: translate(-50%, 130%) scale(0.96);
+        overflow-y: auto;
+      }
+
+      body.panel-open .info-panel {
+        transform: translate(-50%, 0) scale(1);
+      }
+
+      .panel-text {
+        font-size: 13.5px;
+        line-height: 1.68;
+      }
+
+      .click-hint {
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        width: 285px;
+        max-width: 82vw;
+      }
+
+      body.panel-open .logo-area {
+        transform: translateY(-25vh) scale(0.68);
+      }
+
+      .info-panel {
+        bottom: 18px;
+        width: calc(100vw - 38px);
+        max-height: 46vh;
+        padding: 22px 20px;
       }
     }
   </style>
@@ -121,9 +314,25 @@
   <div class="cursor-core" id="cursorCore"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <div class="logo-container">
-    <img src="/mnt/data/0.png" alt="Bitnix Logo" class="logo">
-  </div>
+  <aside class="info-panel" id="infoPanel">
+    <p class="panel-text">
+      Bitnix é uma plataforma digital orientada à oferta e negociação de nomes de domínios e outros ativos digitais onde
+      preza-se pela simplicidade técnica e facilidade operacional.
+      <strong>Prestamos assistência na busca, intermediação, revenda ou aquisição de nomes de domínio na internet —
+        sobretudo aqueles com valor estratégico, comercial ou institucional.</strong>
+      Se você possui domínios “parados”, seja em razão de um site que já não existe mais, seja por ter compreendido o
+      potencial no nome escolhido para um projeto futuro ou de um nicho específico, o Bitnix é o ponto de venda ideal
+      para ofertá-lo à mercado.
+    </p>
+  </aside>
+
+  <main class="logo-area">
+    <div class="logo-container" id="logoButton" role="button" tabindex="0" aria-label="Abrir informações sobre a Bitnix">
+      <img src="/mnt/data/0.png" alt="Bitnix Logo" class="logo">
+    </div>
+
+    <div class="click-hint">clique aqui</div>
+  </main>
 
   <script>
     const canvas = document.getElementById('bg');
@@ -257,7 +466,7 @@
       }, 550);
     }
 
-    document.querySelectorAll('a, button, .logo').forEach(el => {
+    document.querySelectorAll('a, button, .logo-container, .info-panel').forEach(el => {
       el.addEventListener('mouseenter', () => {
         ring.style.width = '22px';
         ring.style.height = '22px';
@@ -272,6 +481,21 @@
     });
 
     animateCursor();
+
+    const logoButton = document.getElementById('logoButton');
+
+    function togglePanel() {
+      document.body.classList.toggle('panel-open');
+    }
+
+    logoButton.addEventListener('click', togglePanel);
+
+    logoButton.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        togglePanel();
+      }
+    });
   </script>
 
 </body>
