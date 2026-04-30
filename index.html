@@ -2,501 +2,330 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bitnix</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bitnix</title>
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #212121;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      cursor: none;
-      font-family: Inter, Arial, Helvetica, sans-serif;
-    }
+<style>
+html, body {
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  background:#212121;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  cursor:none;
+  font-family:Inter, sans-serif;
+}
 
-    canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
+/* BACKGROUND */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
 
-    .cursor-core {
-      position: fixed;
-      width: 3px;
-      height: 3px;
-      background: #ffd76a;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10002;
-      transform: translate(-50%, -50%);
-      box-shadow:
-        0 0 6px rgba(255, 215, 106, 0.9),
-        0 0 14px rgba(255, 200, 80, 0.4);
-    }
+/* CURSOR */
+.cursor-core{
+  position:fixed;
+  width:3px;height:3px;
+  background:#ffd76a;
+  border-radius:50%;
+  z-index:10002;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  box-shadow:0 0 6px #ffd76a,0 0 14px rgba(255,200,80,.4);
+}
 
-    .cursor-ring {
-      position: fixed;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10001;
-      transform: translate(-50%, -50%);
-      border: 1px solid rgba(255, 215, 106, 0.35);
-      box-shadow: 0 0 10px rgba(255, 215, 106, 0.18);
-      transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
-    }
+.cursor-ring{
+  position:fixed;
+  width:16px;height:16px;
+  border-radius:50%;
+  border:1px solid rgba(255,215,106,.3);
+  z-index:10001;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
 
-    .trail {
-      position: fixed;
-      width: 6px;
-      height: 6px;
-      pointer-events: none;
-      z-index: 9998;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(255, 215, 106, 0.9) 0%, rgba(255, 215, 106, 0.35) 45%, transparent 72%);
-      box-shadow:
-        0 0 8px rgba(255, 215, 106, 0.55),
-        0 0 16px rgba(255, 200, 80, 0.25);
-      animation: trailFade 0.55s ease-out forwards;
-    }
+/* TRAIL */
+.trail{
+  position:fixed;
+  width:6px;height:6px;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,#ffd76a,transparent);
+  pointer-events:none;
+  animation:fade .5s forwards;
+}
 
-    @keyframes trailFade {
-      to {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.25);
-      }
-    }
+@keyframes fade{
+  to{opacity:0; transform:translate(-50%,-50%) scale(.2);}
+}
 
-    .logo-area {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-      transition: transform 0.8s cubic-bezier(.2, .9, .2, 1), opacity 0.5s ease;
-    }
+/* LOGO */
+.logo-area{
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  transition:.8s;
+}
 
-    body.panel-open .logo-area {
-      transform: translateX(13vw) scale(0.94);
-    }
+body.panel-open .logo-area{
+  transform:translateX(13vw) scale(.92);
+}
 
-    .logo-container {
-      position: relative;
-      display: inline-block;
-      animation: float 6s ease-in-out infinite;
-      line-height: 0;
-    }
+.logo{
+  width:320px;
+  filter:drop-shadow(0 0 5px rgba(255,215,106,.3));
+  cursor:pointer;
+}
 
-    .logo {
-      width: 360px;
-      max-width: 78vw;
-      display: block;
-      filter:
-        drop-shadow(0 0 1px rgba(255, 255, 255, 0.17))
-        drop-shadow(0 0 3px rgba(255, 215, 106, 0.25))
-        drop-shadow(0 0 7px rgba(255, 190, 55, 0.12));
-      transition: transform 0.35s ease, filter 0.35s ease;
-      user-select: none;
-    }
+/* CLICK TEXT */
+.click-hint{
+  font-size:9px;
+  letter-spacing:.2em;
+  color:rgba(255,255,255,.25);
+  animation:breathe 2.5s infinite;
+}
 
-    .logo-container:hover .logo {
-      transform: scale(1.045);
-      filter:
-        drop-shadow(0 0 2px rgba(255, 255, 255, 0.20))
-        drop-shadow(0 0 5px rgba(255, 215, 106, 0.35))
-        drop-shadow(0 0 15px rgba(255, 190, 55, 0.25));
-    }
+@keyframes breathe{
+  0%,100%{opacity:.2}
+  50%{opacity:.6}
+}
 
-    .click-hint {
-      color: rgba(255, 255, 255, 0.28);
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 500;
-      animation: breathe 2.7s ease-in-out infinite;
-      user-select: none;
-    }
+/* PANEL */
+.info-panel{
+  position:fixed;
+  left:60px;
+  top:50%;
+  transform:translate(-120%,-50%);
+  width:620px;
+  max-width:90vw;
+  background:rgba(20,20,20,.8);
+  border:1px solid rgba(255,215,106,.15);
+  border-radius:18px;
+  padding:30px;
+  backdrop-filter:blur(12px);
+  opacity:0;
+  transition:.7s;
+  z-index:3;
+}
 
-    @keyframes breathe {
-      0%, 100% {
-        opacity: 0.22;
-        transform: translateY(0) scale(1);
-      }
+body.panel-open .info-panel{
+  transform:translate(0,-50%);
+  opacity:1;
+}
 
-      50% {
-        opacity: 0.58;
-        transform: translateY(2px) scale(1.035);
-      }
-    }
+/* TEXT */
+.panel-text{
+  font-size:14px;
+  line-height:1.7;
+  text-align:justify;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.5s;
+}
 
-    .info-panel {
-      position: fixed;
-      left: 70px;
-      top: 50%;
-      width: min(600px, calc(100vw - 84px));
-      max-height: calc(100vh - 84px);
-      padding: 20px 20px;
-      z-index: 4;
-      color: rgba(245, 245, 245, 0.86);
-      background:
-        linear-gradient(145deg, rgba(30, 30, 30, 0.84), rgba(22, 22, 22, 0.72)),
-        radial-gradient(circle at 20% 0%, rgba(255, 215, 106, 0.08), transparent 42%);
-      border: 1px solid rgba(255, 215, 106, 0.16);
-      border-radius: 17px;
-      box-shadow:
-        0 14px 35px rgba(0, 0, 0, 0.38),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        0 0 42px rgba(255, 205, 86, 0.045);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      transform: translate(-120%, -50%) scale(0.96);
-      opacity: 0;
-      pointer-events: none;
-      transition:
-        transform 0.8s cubic-bezier(.2, .9, .2, 1),
-        opacity 0.55s ease;
-      overflow: hidden;
-    }
+.panel-text.active{
+  opacity:1;
+  transform:translateY(0);
+}
 
-    .info-panel::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: linear-gradient(120deg, transparent 0%, rgba(255, 215, 106, 0.09) 45%, transparent 65%);
-      transform: translateX(-120%);
-      opacity: 0;
-      pointer-events: none;
-    }
+.panel-text strong{
+  font-weight:700;
+}
 
-    body.panel-open .info-panel {
-      transform: translate(0, -50%) scale(1);
-      opacity: 1;
-      pointer-events: auto;
-    }
+/* MENU */
+.menu{
+  display:flex;
+  gap:60px;
+  margin-top:30px;
+}
 
-    body.panel-open .info-panel::before {
-      animation: panelShine 1.35s ease 0.22s forwards;
-    }
+.menu-column{
+  font-size:13px;
+  color:#aaa;
+}
 
-    @keyframes panelShine {
-      0% {
-        transform: translateX(-120%);
-        opacity: 0;
-      }
+.menu-title{
+  margin-bottom:10px;
+  font-weight:600;
+  color:#fff;
+}
 
-      25% {
-        opacity: 1;
-      }
+.menu-item{
+  margin:6px 0;
+  cursor:pointer;
+  transition:.2s;
+}
 
-      100% {
-        transform: translateX(120%);
-        opacity: 0;
-      }
-    }
+.menu-item:hover{
+  color:#ffd76a;
+}
 
-    .panel-text {
-      position: relative;
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.78;
-      letter-spacing: 0.01em;
-      text-align: left;
-      font-weight: 400;
-      opacity: 0;
-      transform: translateY(14px);
-    }
-
-    body.panel-open .panel-text {
-      animation: textReveal 0.85s ease 0.34s forwards, textActive 4.8s ease-in-out 1.2s infinite;
-    }
-
-    .panel-text strong {
-      color: rgba(243, 243, 243, 0.95);
-      font-weight: 700;
-      text-shadow: 0 0 12px rgba(255, 215, 106, 0.16);
-    }
-
-    @keyframes textReveal {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes textActive {
-      0%, 100% {
-        text-shadow: 0 0 0 rgba(255, 215, 106, 0);
-      }
-
-      50% {
-        text-shadow: 0 0 16px rgba(255, 215, 106, 0.055);
-      }
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    @media (max-width: 860px) {
-      body.panel-open .logo-area {
-        transform: translateY(-22vh) scale(0.72);
-      }
-
-      .info-panel {
-        left: 50%;
-        top: auto;
-        bottom: 24px;
-        width: min(86vw, 430px);
-        max-height: 44vh;
-        padding: 19px 22px;
-        border-radius: 18px;
-        transform: translate(-50%, 130%) scale(0.96);
-        overflow-y: auto;
-      }
-
-      body.panel-open .info-panel {
-        transform: translate(-50%, 0) scale(1);
-      }
-
-      .panel-text {
-        font-size: 13.5px;
-        line-height: 1.68;
-      }
-
-      .click-hint {
-        font-size: 10px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .logo {
-        width: 285px;
-        max-width: 82vw;
-      }
-
-      body.panel-open .logo-area {
-        transform: translateY(-25vh) scale(0.68);
-      }
-
-      .info-panel {
-        bottom: 18px;
-        width: calc(100vw - 38px);
-        max-height: 46vh;
-        padding: 22px 20px;
-      }
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:768px){
+  .info-panel{
+    left:50%;
+    bottom:20px;
+    top:auto;
+    transform:translate(-50%,120%);
+    width:90%;
+  }
+  body.panel-open .info-panel{
+    transform:translate(-50%,0);
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <canvas id="bg"></canvas>
+<canvas id="bg"></canvas>
 
-  <div class="cursor-core" id="cursorCore"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-core" id="cursorCore"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <aside class="info-panel" id="infoPanel">
-    <p class="panel-text">
-      Bitnix é uma plataforma digital orientada à oferta e negociação de nomes de domínios e outros ativos digitais onde
-      preza-se pela simplicidade técnica e facilidade operacional. <strong>Prestamos assistência na busca, intermediação, 
-        revenda ou aquisição de nomes de domínio na internet — sobretudo aqueles com valor estratégico, comercial ou 
-        institucional.</strong><br><br>
-      Se você possui domínios “parados”, seja em razão de um site que já não existe mais ou por compra para um projeto 
-      futuro que acabou abandonando ou até em razão do potencial para um nicho específico, o Bitnix é o ponto de venda ideal
-      para ofertá-lo à mercado.
-    </p>
-  </aside>
+<!-- PANEL -->
+<div class="info-panel">
+  <div class="panel-text" id="content"></div>
 
-  <main class="logo-area">
-    <div class="logo-container" id="logoButton" role="button" tabindex="0" aria-label="Abrir informações sobre a Bitnix">
-      <img src="bitnix-logo.png" alt="Bitnix Logo" class="logo">
+  <div class="menu">
+
+    <div class="menu-column">
+      <div class="menu-title">BITNIX</div>
+      <div class="menu-item" data-key="sobre">Sobre nós</div>
+      <div class="menu-item" data-key="pi">Propriedade Intelectual</div>
+      <div class="menu-item" data-key="faq">FAQ</div>
     </div>
 
-    <div class="click-hint">clique aqui</div>
-  </main>
+    <div class="menu-column">
+      <div class="menu-title">SERVIÇOS</div>
+      <div class="menu-item" data-key="parking">Parking</div>
+      <div class="menu-item" data-key="escrow">Escrow</div>
+      <div class="menu-item" data-key="backorder">Backorder</div>
+      <div class="menu-item" data-key="hack">Domain Hack</div>
+    </div>
 
-  <script>
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
+    <div class="menu-column">
+      <div class="menu-title">CLIENTE</div>
+      <div class="menu-item" data-key="pagamento">Opções de Pagamento</div>
+      <div class="menu-item" data-key="contratar">Contratar serviços</div>
+    </div>
 
-    let particles = [];
-    const amount = 80;
+  </div>
+</div>
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    }
+<!-- LOGO -->
+<div class="logo-area">
+  <img src="bitnix-logo.png" class="logo" id="logoBtn">
+  <div class="click-hint">clique aqui</div>
+</div>
 
-    window.addEventListener('resize', resize);
+<script>
+/* TEXT CONTENT */
+const contentMap = {
+  sobre: `No Bitnix, os nomes de domínio estão no centro do nosso negócio...`,
+  pi: `Bitnix oferece suporte à proteção de propriedade intelectual...`,
+  escrow: `Um escrow (depósito fiduciário) é um acordo financeiro...`,
+  parking: `O serviço de parking de domínios permite que ativos digitais...`,
+  backorder: `O serviço de backorder da Bitnix é projetado para capturar...`,
+  hack: `Domain hacks utilizam a extensão do domínio...`,
+  pagamento: `A Bitnix oferece múltiplas opções de pagamento...`,
+  contratar: `A contratação de serviços na Bitnix foi desenvolvida...`,
+  faq: `Em breve.`
+};
 
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.28;
-        this.vy = (Math.random() - 0.5) * 0.28;
-        this.size = Math.random() * 1.7 + 0.45;
-        this.gold = Math.random() > 0.82;
-      }
+const contentEl = document.getElementById('content');
 
-      move() {
-        this.x += this.vx;
-        this.y += this.vy;
+function setContent(key){
+  contentEl.classList.remove('active');
+  setTimeout(()=>{
+    contentEl.innerHTML = contentMap[key];
+    contentEl.classList.add('active');
+  },200);
+}
 
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-      }
+/* MENU CLICK */
+document.querySelectorAll('.menu-item').forEach(item=>{
+  item.onclick = ()=> setContent(item.dataset.key);
+});
 
-      draw() {
-        ctx.fillStyle = this.gold
-          ? 'rgba(255, 205, 86, 0.32)'
-          : 'rgba(145, 145, 145, 0.26)';
+/* OPEN PANEL */
+const logo = document.getElementById('logoBtn');
+logo.onclick = ()=>{
+  document.body.classList.toggle('panel-open');
+  setContent('sobre');
+};
 
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
+/* CURSOR */
+const core=document.getElementById('cursorCore');
+const ring=document.getElementById('cursorRing');
 
-    function initParticles() {
-      particles = [];
+let mx=0,my=0,rx=0,ry=0;
 
-      for (let i = 0; i < amount; i++) {
-        particles.push(new Particle());
-      }
-    }
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  core.style.left=mx+'px';
+  core.style.top=my+'px';
 
-    function connect() {
-      for (let a = 0; a < particles.length; a++) {
-        for (let b = a + 1; b < particles.length; b++) {
-          const dx = particles[a].x - particles[b].x;
-          const dy = particles[a].y - particles[b].y;
-          const dist = dx * dx + dy * dy;
+  const dot=document.createElement('div');
+  dot.className='trail';
+  dot.style.left=mx+'px';
+  dot.style.top=my+'px';
+  document.body.appendChild(dot);
+  setTimeout(()=>dot.remove(),500);
+});
 
-          if (dist < 11000) {
-            const hasGold = particles[a].gold || particles[b].gold;
+function anim(){
+  rx+=(mx-rx)*.2;
+  ry+=(my-ry)*.2;
+  ring.style.left=rx+'px';
+  ring.style.top=ry+'px';
+  requestAnimationFrame(anim);
+}
+anim();
 
-            ctx.strokeStyle = hasGold
-              ? 'rgba(255, 205, 86, 0.09)'
-              : 'rgba(150, 150, 150, 0.075)';
+/* BG */
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
 
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(particles[a].x, particles[a].y);
-            ctx.lineTo(particles[b].x, particles[b].y);
-            ctx.stroke();
-          }
-        }
-      }
-    }
+function resize(){
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+}
+resize();
+window.onresize=resize;
 
-    function animateBG() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+let particles=Array.from({length:70},()=>({
+  x:Math.random()*innerWidth,
+  y:Math.random()*innerHeight,
+  vx:(Math.random()-.5)*.3,
+  vy:(Math.random()-.5)*.3
+}));
 
-      particles.forEach(p => {
-        p.move();
-        p.draw();
-      });
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      connect();
-      requestAnimationFrame(animateBG);
-    }
+  particles.forEach(p=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
 
-    resize();
-    animateBG();
+    ctx.fillStyle='rgba(150,150,150,.2)';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,1.2,0,Math.PI*2);
+    ctx.fill();
+  });
 
-    const core = document.getElementById('cursorCore');
-    const ring = document.getElementById('cursorRing');
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
-
-    document.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-
-      core.style.left = mouseX + 'px';
-      core.style.top = mouseY + 'px';
-
-      createTrail(mouseX, mouseY);
-    });
-
-    function animateCursor() {
-      ringX += (mouseX - ringX) * 0.22;
-      ringY += (mouseY - ringY) * 0.22;
-
-      ring.style.left = ringX + 'px';
-      ring.style.top = ringY + 'px';
-
-      requestAnimationFrame(animateCursor);
-    }
-
-    function createTrail(x, y) {
-      const dot = document.createElement('div');
-      dot.className = 'trail';
-      dot.style.left = x + 'px';
-      dot.style.top = y + 'px';
-
-      document.body.appendChild(dot);
-
-      setTimeout(() => {
-        dot.remove();
-      }, 550);
-    }
-
-    document.querySelectorAll('a, button, .logo-container, .info-panel').forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        ring.style.width = '22px';
-        ring.style.height = '22px';
-        ring.style.borderColor = 'rgba(255, 215, 106, 0.62)';
-      });
-
-      el.addEventListener('mouseleave', () => {
-        ring.style.width = '16px';
-        ring.style.height = '16px';
-        ring.style.borderColor = 'rgba(255, 215, 106, 0.35)';
-      });
-    });
-
-    animateCursor();
-
-    const logoButton = document.getElementById('logoButton');
-
-    function togglePanel() {
-      document.body.classList.toggle('panel-open');
-    }
-
-    logoButton.addEventListener('click', togglePanel);
-
-    logoButton.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        togglePanel();
-      }
-    });
-  </script>
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
 
 </body>
-
 </html>
