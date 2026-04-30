@@ -27,7 +27,6 @@
       z-index: 0;
     }
 
-    /* CURSOR CORE (menor e mais refinado) */
     .cursor-core {
       position: fixed;
       width: 3px;
@@ -42,20 +41,18 @@
         0 0 14px rgba(255, 200, 80, 0.4);
     }
 
-    /* RING suave (sem exagero) */
     .cursor-ring {
       position: fixed;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       pointer-events: none;
       z-index: 10001;
       transform: translate(-50%, -50%);
-      border: 1px solid rgba(255, 215, 106, 0.25);
-      box-shadow: 0 0 12px rgba(255, 215, 106, 0.15);
+      border: 1px solid rgba(255, 215, 106, 0.35);
+      box-shadow: 0 0 10px rgba(255, 215, 106, 0.18);
     }
 
-    /* TRAIL refinado */
     .trail {
       position: fixed;
       width: 6px;
@@ -64,65 +61,54 @@
       z-index: 9998;
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(255, 215, 106, 0.9) 0%, rgba(255, 215, 106, 0.4) 40%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 215, 106, 0.9) 0%, rgba(255, 215, 106, 0.35) 45%, transparent 72%);
       box-shadow:
-        0 0 8px rgba(255, 215, 106, 0.6),
-        0 0 18px rgba(255, 200, 80, 0.25);
-      animation: trailFade 0.6s ease-out forwards;
+        0 0 8px rgba(255, 215, 106, 0.55),
+        0 0 16px rgba(255, 200, 80, 0.25);
+      animation: trailFade 0.55s ease-out forwards;
     }
 
     @keyframes trailFade {
       to {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.3);
+        transform: translate(-50%, -50%) scale(0.25);
       }
     }
 
-    /* LOGO */
     .logo-container {
       position: relative;
       display: inline-block;
-      animation: float 6s ease-in-out infinite;
       z-index: 2;
+      animation: float 6s ease-in-out infinite;
+      line-height: 0;
     }
 
     .logo {
-      width: 600px;
-      max-width: 90vw;
-      filter: drop-shadow(0 0 20px rgba(255, 215, 106, 0.1));
-      transition: transform 0.3s ease, filter 0.3s ease;
+      width: 360px;
+      max-width: 78vw;
+      display: block;
+      filter:
+        drop-shadow(0 0 2px rgba(255, 255, 255, 0.25))
+        drop-shadow(0 0 5px rgba(255, 215, 106, 0.35))
+        drop-shadow(0 0 12px rgba(255, 190, 55, 0.22));
+      transition: transform 0.35s ease, filter 0.35s ease;
     }
 
     .logo-container:hover .logo {
-      transform: scale(1.05);
-      filter: drop-shadow(0 0 40px rgba(255, 215, 106, 0.3));
-    }
-
-    .logo-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 118%;
-      height: 118%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(255, 215, 106, 0.08), transparent 70%);
-      animation: pulse 4s ease-in-out infinite;
-      pointer-events: none;
+      transform: scale(1.045);
+      filter:
+        drop-shadow(0 0 3px rgba(255, 255, 255, 0.35))
+        drop-shadow(0 0 7px rgba(255, 215, 106, 0.48))
+        drop-shadow(0 0 18px rgba(255, 190, 55, 0.32));
     }
 
     @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-
-    @keyframes pulse {
       0%, 100% {
-        opacity: 0.3;
-        transform: translate(-50%, -50%) scale(0.95);
+        transform: translateY(0);
       }
+
       50% {
-        opacity: 0.7;
-        transform: translate(-50%, -50%) scale(1.05);
+        transform: translateY(-10px);
       }
     }
   </style>
@@ -136,12 +122,10 @@
   <div class="cursor-ring" id="cursorRing"></div>
 
   <div class="logo-container">
-    <div class="logo-glow"></div>
-    <img src="/img/bitnix-logo.png" alt="" class="logo">
+    <img src="/mnt/data/0.png" alt="Bitnix Logo" class="logo">
   </div>
 
   <script>
-    /* BACKGROUND */
     const canvas = document.getElementById('bg');
     const ctx = canvas.getContext('2d');
 
@@ -160,9 +144,10 @@
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.7) * 0.5;
-        this.vy = (Math.random() - 0.7) * 0.5;
-        this.size = Math.random() * 1.6 + 0.7;
+        this.vx = (Math.random() - 0.5) * 0.28;
+        this.vy = (Math.random() - 0.5) * 0.28;
+        this.size = Math.random() * 1.7 + 0.45;
+        this.gold = Math.random() > 0.82;
       }
 
       move() {
@@ -174,7 +159,10 @@
       }
 
       draw() {
-        ctx.fillStyle = 'rgba(130,130,130,0.18)';
+        ctx.fillStyle = this.gold
+          ? 'rgba(255, 205, 86, 0.32)'
+          : 'rgba(145, 145, 145, 0.26)';
+
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -183,6 +171,7 @@
 
     function initParticles() {
       particles = [];
+
       for (let i = 0; i < amount; i++) {
         particles.push(new Particle());
       }
@@ -195,8 +184,13 @@
           const dy = particles[a].y - particles[b].y;
           const dist = dx * dx + dy * dy;
 
-          if (dist < 10000) {
-            ctx.strokeStyle = 'rgba(150,150,150,0.08)';
+          if (dist < 11000) {
+            const hasGold = particles[a].gold || particles[b].gold;
+
+            ctx.strokeStyle = hasGold
+              ? 'rgba(255, 205, 86, 0.09)'
+              : 'rgba(150, 150, 150, 0.075)';
+
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(particles[a].x, particles[a].y);
@@ -222,14 +216,13 @@
     resize();
     animateBG();
 
-    /* CURSOR  */
     const core = document.getElementById('cursorCore');
     const ring = document.getElementById('cursorRing');
 
-    let mouseX = 0;
-    let mouseY = 0;
-    let ringX = 0;
-    let ringY = 0;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
 
     document.addEventListener('mousemove', e => {
       mouseX = e.clientX;
@@ -242,8 +235,8 @@
     });
 
     function animateCursor() {
-      ringX += (mouseX - ringX) * 0.2;
-      ringY += (mouseY - ringY) * 0.2;
+      ringX += (mouseX - ringX) * 0.22;
+      ringY += (mouseY - ringY) * 0.22;
 
       ring.style.left = ringX + 'px';
       ring.style.top = ringY + 'px';
@@ -251,31 +244,34 @@
       requestAnimationFrame(animateCursor);
     }
 
-    animateCursor();
-
     function createTrail(x, y) {
       const dot = document.createElement('div');
       dot.className = 'trail';
-
       dot.style.left = x + 'px';
       dot.style.top = y + 'px';
 
       document.body.appendChild(dot);
 
-      setTimeout(() => dot.remove(), 600);
+      setTimeout(() => {
+        dot.remove();
+      }, 550);
     }
 
-    document.querySelectorAll('a,button,.logo').forEach(el => {
+    document.querySelectorAll('a, button, .logo').forEach(el => {
       el.addEventListener('mouseenter', () => {
-        ring.style.transform = 'translate(-50%, -50%) scale(1.6)';
-        ring.style.borderColor = 'rgba(255,215,106,0.5)';
+        ring.style.width = '22px';
+        ring.style.height = '22px';
+        ring.style.borderColor = 'rgba(255, 215, 106, 0.62)';
       });
 
       el.addEventListener('mouseleave', () => {
-        ring.style.transform = 'translate(-50%, -50%) scale(1)';
-        ring.style.borderColor = 'rgba(255,215,106,0.25)';
+        ring.style.width = '16px';
+        ring.style.height = '16px';
+        ring.style.borderColor = 'rgba(255, 215, 106, 0.35)';
       });
     });
+
+    animateCursor();
   </script>
 
 </body>
