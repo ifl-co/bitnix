@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitnix</title>
+  <style>
+    html,
+    body {
+      /* ── BACKGROUND ── */
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #212121;
+
+    }
+
+    /* ── CURSOR ── */
+    .cursor {
+      position: fixed;
+      width: 7px;
+      height: 7px;
+      background: #f0f0f0d0;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform .35s;
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 33px;
+      height: 33px;
+      border: 1px solid rgba(255, 255, 255, 0.199);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.75s ease;
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      setTimeout(() => {
+        ring.style.left = e.clientX + 'px';
+        ring.style.top = e.clientY + 'px';
+      }, 80);
+    });
+    document.querySelectorAll('a,button').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.style.transform = 'translate(-50%,-50%) scale(1.8)');
+      el.addEventListener('mouseleave', () => ring.style.transform = 'translate(-50%,-50%) scale(1)');
+    });
+  </script>
+
+</body>
+
+</html>
