@@ -2,327 +2,85 @@
 <html lang="pt-BR">
 
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Bitnix</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página em Construção | Bitnix</title>
 
-<style>
-html, body {
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  background:#212121;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  cursor:none;
-  font-family:Inter, sans-serif;
-  font-color: white;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* BACKGROUND */
-canvas{
-  position:fixed;
-  inset:0;
-  z-index:0;
-}
+    body {
+      min-height: 100vh;
+      background: #212121;
+      color: #f0f0f0;
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
 
-/* CURSOR */
-.cursor-core{
-  position:fixed;
-  width:3px;height:3px;
-  background:#ffd76a;
-  border-radius:50%;
-  z-index:10002;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-  box-shadow:0 0 6px #ffd76a,0 0 14px rgba(255,200,80,.4);
-}
+    .container {
+      max-width: 600px;
+      animation: fadeIn 1.2s ease-out;
+    }
 
-.cursor-ring{
-  position:fixed;
-  width:16px;height:16px;
-  border-radius:50%;
-  border:1px solid rgba(255,215,106,.3);
-  z-index:10001;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-}
+    h1 {
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 400;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
 
-/* TRAIL */
-.trail{
-  position:fixed;
-  width:6px;height:6px;
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-  background:radial-gradient(circle,#ffd76a,transparent);
-  pointer-events:none;
-  animation:fade .5s forwards;
-}
+    p {
+      font-size: 15px;
+      color: #999;
+      line-height: 1.8;
+      letter-spacing: 0.3px;
+    }
 
-@keyframes fade{
-  to{opacity:0; transform:translate(-50%,-50%) scale(.2);}
-}
+    .line {
+      width: 45px;
+      height: 2px;
+      background: #d4af37;
+      margin: 30px auto;
+      border-radius: 2px;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    }
 
-/* LOGO */
-.logo-area{
-  z-index:2;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:14px;
-  transition:.8s;
-}
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
 
-body.panel-open .logo-area{
-  transform:translateX(13vw) scale(.92);
-}
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.logo{
-  width:320px;
-  filter:drop-shadow(0 0 5px rgba(255,215,106,.3));
-  cursor:pointer;
-}
-
-/* CLICK TEXT */
-.click-hint{
-  font-size:9px;
-  letter-spacing:.2em;
-  color:rgba(255,255,255,.25);
-  animation:breathe 2.5s infinite;
-}
-
-@keyframes breathe{
-  0%,100%{opacity:.2}
-  50%{opacity:.6}
-}
-
-/* PANEL */
-.info-panel{
-  position:fixed;
-  left:60px;
-  top:50%;
-  transform:translate(-120%,-50%);
-  width:620px;
-  max-width:90vw;
-  background:rgba(20,20,20,.8);
-  border:1px solid rgba(255,215,106,.15);
-  border-radius:18px;
-  padding:30px;
-  backdrop-filter:blur(12px);
-  opacity:0;
-  transition:.7s;
-  z-index:3;
-}
-
-body.panel-open .info-panel{
-  transform:translate(0,-50%);
-  opacity:1;
-}
-
-/* TEXT */
-.panel-text{
-  font-size:14px;
-  color: #fff; 
-  line-height:1.7;
-  text-align:justify;
-  opacity:0;
-  transform:translateY(10px);
-  transition:.5s;
-}
-
-.panel-text.active{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.panel-text strong{
-  font-weight:700;
-}
-
-/* MENU */
-.menu{
-  display:flex;
-  gap:60px;
-  margin-top:30px;
-}
-
-.menu-column{
-  font-size:13px;
-  color:#aaa;
-}
-
-.menu-title{
-  margin-bottom:10px;
-  font-weight:600;
-  color:#fff;
-}
-
-.menu-item{
-  margin:6px 0;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.menu-item:hover{
-  color:#ffd76a;
-}
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  .info-panel{
-    left:50%;
-    bottom:20px;
-    top:auto;
-    transform:translate(-50%,120%);
-    width:90%;
-  }
-  body.panel-open .info-panel{
-    transform:translate(-50%,0);
-  }
-}
-</style>
+    @media (prefers-reduced-motion: reduce) {
+      .container {
+        animation: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<canvas id="bg"></canvas>
-
-<div class="cursor-core" id="cursorCore"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- PANEL -->
-<div class="info-panel">
-  <div class="panel-text" id="content"></div>
-
-  <div class="menu">
-
-    <div class="menu-column">
-      <div class="menu-title">BITNIX</div>
-      <div class="menu-item" data-key="sobre">Sobre nós</div>
-      <div class="menu-item" data-key="pi">Propriedade Intelectual</div>
-    </div>
-
-    <div class="menu-column">
-      <div class="menu-title">SERVIÇOS</div>
-      <div class="menu-item" data-key="parking">Parking</div>
-      <div class="menu-item" data-key="escrow">Escrow</div>
-      <div class="menu-item" data-key="backorder">Backorder</div>
-      <div class="menu-item" data-key="hack">Domain Hack</div>
-    </div>
-
-    <div class="menu-column">
-      <div class="menu-title">CLIENTE</div>
-      <div class="menu-item" data-key="contratar">Contratar serviços</div>
-    </div>
-
-  </div>
-</div>
-
-<!-- LOGO -->
-<div class="logo-area">
-  <img src="bitnix-logo.png" class="logo" id="logoBtn">
-  <div class="click-hint">clique aqui</div>
-</div>
-
-<script>
-/* TEXT CONTENT */
-const contentMap = {
- sobre: `Bitnix é uma plataforma digital orientada à oferta e negociação de nomes de domínios e outros ativos digitais onde preza-se pela simplicidade técnica e facilidade operacional.  Prestamos assistência na busca, intermediação, revenda ou aquisição de nomes de domínio na internet — sobretudo aqueles com valor estratégico, comercial ou institucional.  Se você possui domínios “parados”, seja em razão de um site que já não existe mais, seja por ter compreendido o potencial no nome escolhido para um projeto futuro ou de um nicho específico, o Bitnix é o ponto de venda ideal para ofertá-lo à mercado.  Nossa forte reputação se baseia em nosso compromisso de colocar os clientes em primeiro lugar.`,
- pi: `Oferecemos suporte à proteção de propriedade intelectual.  Quer você seja o proprietário de marcas registradas, marcas de serviço ou direitos autorais, o Bitnix está comprometido em ajudá-lo a proteger seus direitos e interesses legítimos.  Qualquer organização ou indivíduo que acredite que o conteúdo dos produtos e serviços fornecidos pelo Bitnix possa infringir seus trabalhos protegidos por direitos autorais, marcas registradas ou qualquer outra propriedade intelectual pode enviar uma notificação por escrito dos direitos ao Bitnix através do Sistema de Denúncia Online de Abuso de Domínio.`,
- escrow: `Um escrow (depósito fiduciário) é um acordo financeiro e legal projetado para proteger compradores e vendedores em uma transação.  Mediante o pagamento de uma taxa, um terceiro independente (Bitnix) retém o pagamento até que todos cumpram suas responsabilidades na transação.  Com um pagamento em garantia, o Vendedor só receberá os fundos quando o Comprador receber e aceitar os produtos e/ou serviços que fazem parte da transação.  No entanto, o Vendedor sabe que receberá o pagamento porque o Bitnix.com.br mantém os fundos em seu nome.`,
- parking: `O serviço de parking de domínios permite que ativos digitais não utilizados continuem gerando valor enquanto permanecem disponíveis para negociação ou desenvolvimento futuro.  A Bitnix disponibiliza uma estrutura automatizada que exibe conteúdo relevante ao visitante, possibilitando a monetização por meio de tráfego orgânico sem necessidade de manutenção técnica por parte do proprietário.  Trata-se de uma solução eficiente para titulares que desejam preservar seus domínios ativos, manter visibilidade no ambiente digital e, simultaneamente, explorar oportunidades de receita passiva com baixo esforço operacional.`,
- backorder: `O serviço de backorder da Bitnix é projetado para capturar oportunidades estratégicas no momento exato em que um domínio se torna disponível para registro.  Por meio de monitoramento contínuo e execução automatizada, realizamos tentativas de aquisição assim que o domínio expira ou é liberado pelo registro.  Esse processo aumenta significativamente as chances de obtenção de nomes relevantes e de alto valor.  É uma solução especialmente indicada para usuários que desejam garantir domínios disputados sem a necessidade de acompanhamento manual constante ou intervenção técnica especializada.`,
- hack: `Domain hacks são composições inteligentes que utilizam a extensão do domínio como parte integrante do nome, criando endereços curtos, memoráveis e com forte apelo de marca.  A Bitnix auxilia na identificação, análise e aquisição dessas estruturas, considerando fatores linguísticos, disponibilidade e potencial comercial.  Esse tipo de domínio é amplamente utilizado em projetos modernos, startups e iniciativas digitais que buscam diferenciação e identidade marcante.  Com abordagem estratégica, possibilitamos transformar ideias criativas em ativos digitais com alto valor de comunicação.`,
-};
-
-const contentEl = document.getElementById('content');
-
-function setContent(key){
-  contentEl.classList.remove('active');
-  setTimeout(()=>{
-    contentEl.innerHTML = contentMap[key];
-    contentEl.classList.add('active');
-  },200);
-}
-
-/* MENU CLICK */
-document.querySelectorAll('.menu-item').forEach(item=>{
-  item.onclick = ()=> setContent(item.dataset.key);
-});
-
-/* OPEN PANEL */
-const logo = document.getElementById('logoBtn');
-logo.onclick = ()=>{
-  document.body.classList.toggle('panel-open');
-  setContent('sobre');
-};
-
-/* CURSOR */
-const core=document.getElementById('cursorCore');
-const ring=document.getElementById('cursorRing');
-
-let mx=0,my=0,rx=0,ry=0;
-
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX; my=e.clientY;
-  core.style.left=mx+'px';
-  core.style.top=my+'px';
-
-  const dot=document.createElement('div');
-  dot.className='trail';
-  dot.style.left=mx+'px';
-  dot.style.top=my+'px';
-  document.body.appendChild(dot);
-  setTimeout(()=>dot.remove(),500);
-});
-
-function anim(){
-  rx+=(mx-rx)*.2;
-  ry+=(my-ry)*.2;
-  ring.style.left=rx+'px';
-  ring.style.top=ry+'px';
-  requestAnimationFrame(anim);
-}
-anim();
-
-/* BG */
-const canvas=document.getElementById('bg');
-const ctx=canvas.getContext('2d');
-
-function resize(){
-  canvas.width=innerWidth;
-  canvas.height=innerHeight;
-}
-resize();
-window.onresize=resize;
-
-let particles=Array.from({length:70},()=>({
-  x:Math.random()*innerWidth,
-  y:Math.random()*innerHeight,
-  vx:(Math.random()-.5)*.3,
-  vy:(Math.random()-.5)*.3
-}));
-
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  particles.forEach(p=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-
-    ctx.fillStyle='rgba(150,150,150,.2)';
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,1.2,0,Math.PI*2);
-    ctx.fill();
-  });
-
-  requestAnimationFrame(draw);
-}
-draw();
-</script>
+  <main class="container">
+    <h1>Página em construção.</h1>
+    <div class="line"></div>
+    <p>Indisponibilidade por tempo indeterminado.</p>
+  </main>
 
 </body>
+
 </html>
